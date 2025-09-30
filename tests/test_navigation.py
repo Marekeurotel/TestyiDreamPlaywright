@@ -1,5 +1,4 @@
 # W pliku: tests/test_navigation.py
-import pytest
 import requests
 from pages.home_page import HomePage
 import logging
