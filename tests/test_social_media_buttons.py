@@ -12,9 +12,7 @@ logger = logging.getLogger(__name__)
     ('instagram', "https://www.instagram.com/idream_pl/"),
     ('facebook', "https://www.facebook.com/iDreamPolska/"),
     ('tiktok', "https://www.tiktok.com/@idream_pl"),
-    # Dla YouTube nadal musisz zdecydować, czy oczekujesz dynamicznego URL-a
-    # czy uda się dotrzeć do statycznego. Ustawiamy go z nowym, bardziej prawdopodobnym URL.
-    ('youtube', "https://www.youtube.com/user/iDreamPL"), # Proponowany rzeczywisty URL kanału iDream
+    ('youtube', "https://www.youtube.com/user/iDreamPL"),
 ])
 def test_social_media_links(home_page_fixture: HomePage, button_type: str, expected_url_template: str):
     logger.info(f"Test: sprawdzanie linku dla {button_type}.")

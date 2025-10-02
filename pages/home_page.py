@@ -22,13 +22,11 @@ class HomePage(BasePage):
         }
 
         self.hamburger_icon = self.page.locator("#sw_dropdown_541 i").first
-        # Lokator kontenera dla całego wysuwanego, bocznego menu (do znalezienia)
-        # BARDZO PRAWDOPODOBNY LOKATOR, który obejmuje całe to menu:
-        self.sidebar_menu_links = self.page.locator(".ty-menu__cols a[href]")
-        self.submenu_content_holder = self.page.locator("div.submenu-holder")
+        # NOWY, POPRAWNY LOKATOR CSS dla głównych kategorii w bocznym menu:
+        self.main_menu_links_locator = self.page.locator(".ut2-lfl > p > a[href]")
 
     # ----------------------------------------------------------------------
-    # NOWE METODY DO OBSŁUGI WYSZUKIWANIA (Naprawa AttributeError)
+    # NOWE METODY DO OBSŁUGI WYSZUKIWANIA
     # ----------------------------------------------------------------------
 
     def perform_search(self, query: str):
@@ -73,55 +71,57 @@ class HomePage(BasePage):
         return popup_page
 
     def get_main_menu_links(self) -> list[dict]:
-        """
-        Wersja dla menu bocznego: klika w ikonę hamburgera, czeka na widoczność
-        menu, a następnie zbiera wszystkie linki.
-        """
-        logger.info("Starting link extraction from side menu (hamburger icon required).")
+        # Wracamy do zwracania listy dict, nie int
+        logger.info("Test: Klika w ikonę hamburgera i zbiera główne linki menu.")
 
-        # KROK 1: Kliknij ikonę hamburgera, aby otworzyć menu
+        # ... KROK 1: Kliknięcie hamburgera ...
         try:
-            # Sprawdzamy, czy ikona jest w ogóle widoczna (na dużym ekranie może jej nie być)
             self.hamburger_icon.click(timeout=5000)
-            logger.info("Ikona hamburgera kliknięta. Oczekuję na wysunięcie menu bocznego.")
-        except Exception as e:
-            # Jeśli kliknięcie zawiedzie, logujemy błąd, ale test może iść dalej,
-            # zakładając, że menu jest widoczne (np. na desktopie)
-            logger.warning(f"Nie udało się kliknąć ikony hamburgera: {e}")
+            logger.info("Ikona hamburgera kliknięta.")
+        except Exception:
+            logger.warning("Ikona hamburgera nie została znaleziona w 5s. Zakładam, że menu jest otwarte.")
 
-        # KROK 2: Poczekaj, aż jakiś kluczowy element menu będzie widoczny
-        # Używamy znalezionego lokatora "Mac" jako dowodu na załadowanie menu.
-        mac_link_locator = self.page.get_by_role("link", name="Mac Nowoczesne laptopy i")
+        # ... KROK 2: Czekanie na widoczność menu ...
+        mac_link_locator = self.page.get_by_role("link", name="Mac", exact=True).first
         try:
             expect(mac_link_locator).to_be_visible(timeout=10000)
-            logger.info("Menu boczne jest widoczne.")
-        except TimeoutError:
-            self.page.screenshot(path="error_side_menu_not_visible.png")
-            logger.error("Menu boczne nie wysunęło się po kliknięciu hamburgera.")
-            return []  # Zwracamy pustą listę, co spowoduje błąd w teście.
+            logger.info("Potwierdzono widoczność menu bocznego.")
+        except Exception:
+            logger.error("Menu boczne nie wysunęło się lub jest niewidoczne.")
+            self.page.screenshot(path="error_menu_not_visible.png")
+            return []
 
-        # KROK 3: Bezpiecznie zbieramy linki z kontenera menu bocznego
+        # KROK 3: Zbieranie linków (Używamy NOWEGO, precyzyjnego lokatora)
         unique_links = {}
 
-        # Używamy wcześniej zdefiniowanego lokatora dla linków w menu bocznym
-        all_links = self.sidebar_menu_links.all()
+        # Użycie nowego lokatora, który zbiera tylko linki głównych kategorii
+        all_main_category_locators = self.main_menu_links_locator.all()
 
-        for link_locator in all_links:
-            # ... (Twoja obecna logika zbierania tekstu i href)
+        for link_locator in all_main_category_locators:
             text = (link_locator.text_content() or "").strip()
             href = link_locator.get_attribute("href")
+            # Wyodrębnij tylko nazwę kategorii (Mac, iPhone, etc.)
+            # Tekst ma format: "Mac\nNowoczesne laptopy..." - Bierzemy tylko pierwszą linię
 
-            if text and href and href not in unique_links:
-                # Upewnij się, że linki względne są konwertowane na pełne URL-e
+            category_name = text.split('\n')[0].strip()
+            # Sprawdzamy tylko, czy znaleźliśmy link z tekstem i href
+            if category_name and href and href not in unique_links:
+                # Normalizujemy URL
                 if href.startswith('/'):
                     href = f"https://idream.pl{href}"
-                unique_links[href] = {'text': text, 'href': href}
 
-        # Zamykamy menu po zebraniu linków, jeśli to konieczne (np. przez kliknięcie poza)
-        # self.page.keyboard.press("Escape")
+                unique_links[href] = {'text': category_name, 'href': href}
+
+            # Filtrujemy, aby zbierać tylko główne linki (Mac, iPhone, iPad itd.)
+            # Na podstawie HTML, główny tekst to Mac, iPhone, etc.
+            if text.split('\n')[0].strip() in ["Mac", "iPhone", "iPad", "Watch", "Muzyka", "TV", "Akcesoria"]:
+                # Normalizujemy URL
+                if href.startswith('/'):
+                    href = f"https://idream.pl{href}"
+                unique_links[href] = {'text': text.split('\n')[0].strip(), 'href': href}
 
         links_data = list(unique_links.values())
-        logger.info(f"Total unique links found across all menus: {len(links_data)}")
+        logger.info(f"Znaleziono {len(links_data)} głównych linków menu.")
         return links_data
 
     def get_social_media_expected_url(self, button_type: str) -> str:
