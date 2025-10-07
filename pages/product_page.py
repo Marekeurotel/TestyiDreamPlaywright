@@ -18,12 +18,12 @@ class ProductPage(BasePage):
         # Dodaj selektory dla szczegółów produktu, np.
         self.product_name_locator = self.page.locator("h1.ty-product-block-title")
         self.product_price_locator = self.page.locator(".ty-price-num")
-        self.price_element: Locator = self.page.locator(".ty-price").first
+        self.price_element: Locator = self.page.locator(".ty-price-num").first
         self.description_accordion: Locator = self.page.locator(".idr-accordion-title", has_text="Skrócony opis")
         self.specification_tab: Locator = self.page.locator(".ty-tabs__a", has_text="Dane techniczne")
 
     def open_specific_product(self, product_url: str):
-        self.go_to(product_url) # Używamy metody go_to z BasePage
+        self.page.goto(product_url) # Używamy metody go_to z BasePage
 
     def add_product_to_cart(self):
         logger.info("Attempting to add product to cart.")
@@ -48,8 +48,8 @@ class ProductPage(BasePage):
 
     def open_product_page(self):
         """Otwiera stronę produktu i obsługuje początkowe popupy."""
-        self.go_to(self.URL)
-        self.handle_all_initial_popups()
+        self.page.goto(self.URL)
+        self.open_page_and_handle_initial_popups()
         logger.info("Product page opened and initial popups handled.")
 
     def verify_product_details_displayed(self):

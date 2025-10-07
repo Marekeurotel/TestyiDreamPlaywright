@@ -1,15 +1,19 @@
-# tests/test_product_page.py
 import logging
-from pages.product_page import ProductPage  # Typowanie dla lepszej czytelności
+from pages.product_page import ProductPage
 
 logger = logging.getLogger(__name__)
 
-def test_product_details_displayed (product_page_fixture: ProductPage):
+
+def test_product_details_displayed(product_page_fixture: ProductPage):
     """
     Sprawdzenie, czy szczegóły produktu są wyświetlane poprawnie
     na stronie produktu.
     """
+    home_page = product_page_fixture  # Zmieniamy nazwę dla czytelności
     logger.info("Test: weryfikacja wyświetlania szczegółów produktu.")
-    # Cała logika weryfikacji została przeniesiona do Page Objectu.
-    # Wystarczy wywołać jedną metodę.
-    product_page_fixture.verify_product_details_displayed()
+
+    # 1. KROK BRAKUJĄCY: Otwórz stronę produktu!
+    home_page.open_product_page()  # <--- TUTAJ JEST BRAKUJĄCE WYWOŁANIE
+
+    # 2. Wywołaj logikę weryfikacji.
+    home_page.verify_product_details_displayed()

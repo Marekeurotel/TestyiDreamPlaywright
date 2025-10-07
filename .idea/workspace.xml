@@ -5,13 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9fcfe493-602a-4366-a5ee-675b3f7e172a" name="Changes" comment="Fixing tests">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/home_page.py" beforeDir="false" afterPath="$PROJECT_DIR$/pages/home_page.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/product_page.py" beforeDir="false" afterPath="$PROJECT_DIR$/pages/product_page.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pytest.ini" beforeDir="false" afterPath="$PROJECT_DIR$/pytest.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/error_no_links_found_at_all.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_home_page.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_home_page.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_navigation.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_navigation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_social_media_buttons.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_social_media_buttons.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_product_page.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_product_page.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,6 +24,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="lokalne-testy-z-widokiem" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -75,7 +78,8 @@
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;last_opened_file_path&quot;: &quot;/Users/marek/PycharmProjects/TestyiDream&quot;,
-    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
 }</component>
   <component name="RecentsManager">
@@ -84,7 +88,7 @@
       <recent name="$PROJECT_DIR$/tests" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_navigation.test_main_menu_link_health">
+  <component name="RunManager" selected="Python tests.Python tests for test_product_page.test_product_details_displayed">
     <configuration name="Python tests for test_home_page.test_home_page_title" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="TestyiDream" />
       <option name="ENV_FILES" value="" />
@@ -162,8 +166,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.Python tests for test_navigation.test_main_menu_link_health" />
         <item itemvalue="Python tests.Python tests for test_product_page.test_product_details_displayed" />
+        <item itemvalue="Python tests.Python tests for test_navigation.test_main_menu_link_health" />
         <item itemvalue="Python tests.Python tests for test_social_media_buttons.test_social_media_links" />
         <item itemvalue="Python tests.Python tests for test_home_page.test_social_media_links" />
         <item itemvalue="Python tests.Python tests for test_home_page.test_home_page_title" />
@@ -218,7 +222,15 @@
       <option name="project" value="LOCAL" />
       <updated>1759241008457</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Fixing tests">
+      <option name="closed" value="true" />
+      <created>1759406265649</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1759406265649</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
