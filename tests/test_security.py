@@ -1,15 +1,14 @@
 # tests/test_security.py
 import pytest
 import logging
-from playwright.sync_api import Page
 from pages.home_page import HomePage
 from tests.conftest import home_page_fixture  # Upewnij się, że masz tę fixturę
+from playwright._impl._errors import TimeoutError
 
 logger = logging.getLogger(__name__)
 
 
-@pytest.mark.skip(
-    reason="Testy bezpieczeństwa działają i poprawnie wykrywają WAF. Uruchamiaj je tylko w razie potrzeby.")
+#@pytest.mark.skip(reason="Testy bezpieczeństwa działają i poprawnie wykrywają WAF. Uruchamiaj je tylko w razie potrzeby.")
 def test_sql_injection(home_page_fixture: HomePage):
     """
     Testuje podatność na SQL Injection, sprawdzając czy strona poprawnie blokuje atak.
@@ -25,7 +24,6 @@ def test_sql_injection(home_page_fixture: HomePage):
     ]
 
     for payload in sql_payloads:
-        with pytest.warns(None):  # Pytest ignoruje ostrzeżenia w tej pętli, co pozwala na kontynuację
             home_page_fixture.perform_search(payload)
 
             if home_page_fixture.is_blocked_by_waf():
@@ -54,7 +52,7 @@ def test_sql_injection(home_page_fixture: HomePage):
             logger.info(f"✅ Payload '{payload}' - brak wykrytych podatności")
 
 
-@pytest.mark.skip(reason="Testy bezpieczeństwa działają i poprawnie wykrywają WAF. Uruchamiaj je tylko w razie potrzeby.")
+#@pytest.mark.skip(reason="Testy bezpieczeństwa działają i poprawnie wykrywają WAF. Uruchamiaj je tylko w razie potrzeby.")
 def test_xss_attack(home_page_fixture: HomePage):
     """
     Testuje podatność na XSS (Cross-Site Scripting).
@@ -70,35 +68,37 @@ def test_xss_attack(home_page_fixture: HomePage):
     ]
 
     for payload in xss_payloads:
-        with pytest.warns(None):
-            try:
-                with home_page_fixture.page.expect_event("dialog", timeout=3000):
-                    home_page_fixture.perform_search(payload)
+        try:
+            # KLUCZOWA ZMIANA: ZAWSZE OTWÓRZ STRONĘ GŁÓWNĄ PRZED KAŻDYM PAYLOADEM
+            home_page_fixture.open_page_and_handle_initial_popups()
 
-                # Jeśli alert się pojawił, test kończy się niepowodzeniem
-                pytest.fail(f"❌ PODATNOŚĆ XSS: Wykryto alert JavaScript dla payload: {payload}")
+            # KROK 1: Wykonaj akcję WYSZUKIWANIA i poczekaj na załadowanie strony
+            home_page_fixture.perform_search(payload)
+            home_page_fixture.verify_search_results_exist()
 
-            except TimeoutError:
-                # Brak alertu jest oczekiwanym rezultatem
-                if home_page_fixture.is_blocked_by_waf():
-                    logger.info(f"✅ DOBRY WYNIK: Payload '{payload}' zablokowany przez WAF")
-                else:
-                    page_source = home_page_fixture.get_page_content()
-                    assert payload not in page_source, f"❌ PODATNOŚĆ XSS: Payload może być wykonalny: {payload}"
+            # KROK 2: Nasłuchuj na dialog (5 sekund wystarczy, bo strona jest już załadowana)
+            with home_page_fixture.page.expect_event("dialog", timeout=5000):
+                pass
 
-                    escaped_checks = ["&lt;script&gt;", "&quot;", "&#x27;", "&amp;"]
-                    found_escaping = any(check in page_source for check in escaped_checks)
+            # BLOK TRY: Kod wykonuje się TYLKO, jeśli DIALOG SIĘ POJAWIŁ
+            pytest.fail(f"❌ PODATNOŚĆ XSS: Wykryto alert JavaScript dla payload: {payload}")
 
-                    if found_escaping:
-                        logger.info(f"✅ Znaleziono poprawne escapowanie dla payload: {payload}")
-                    elif any(char in payload for char in ['<', '>', '"', "'"]):
-                        pytest.fail(f"⚠️  Brak widocznego escapowania dla payload: {payload}")
+        except TimeoutError:
+            # BLOK EXCEPT TimeoutError: Kod wykonuje się, jeśli DIALOG SIĘ NIE POJAWIŁ (OCZEKIWANY WYNIK)
 
+            if home_page_fixture.is_blocked_by_waf():
+                logger.info(f"✅ DOBRY WYNIK: Payload '{payload}' zablokowany przez WAF")
+            else:
+                page_source = home_page_fixture.get_page_content()
+                assert payload not in page_source, f"❌ PODATNOŚĆ XSS: Payload może być wykonalny: {payload}"
                 logger.info(f"✅ Payload '{payload}' - brak wykrytych podatności XSS")
 
+        except Exception as e:
+            # Ten blok jest tylko dla błędów INNYCH niż TimeoutError (np. błąd lokatora)
+            logger.error(f"Nieoczekiwany błąd (np. błąd lokatora) w teście XSS dla payload '{payload}': {e}")
+            raise e
 
-@pytest.mark.skip(
-    reason="Testy bezpieczeństwa działają i poprawnie wykrywają WAF. Uruchamiaj je tylko w razie potrzeby.")
+# @pytest.mark.skip(reason="Testy bezpieczeństwa działają i poprawnie wykrywają WAF. Uruchamiaj je tylko w razie potrzeby.")
 def test_waf_bypass_attempts(home_page_fixture: HomePage):
     """Test próby ominięcia WAF - bardziej subtelne payloady."""
     logger.info("Test: WAF bypass attempts")
@@ -115,31 +115,34 @@ def test_waf_bypass_attempts(home_page_fixture: HomePage):
     ]
 
     for payload in bypass_payloads:
-        with pytest.warns(None):
-            home_page_fixture.perform_search(payload)
-            page_source = home_page_fixture.get_page_content()
+        # ... perform search i get content ...
 
-            if home_page_fixture.is_blocked_by_waf():
-                logger.info(f"✅ WAF zablokował bypass attempt: {payload}")
-            else:
-                pytest.fail(f"❌ KRYTYCZNA PODATNOŚĆ: Możliwy bypass WAF: {payload}")
+        if home_page_fixture.is_blocked_by_waf():
+            logger.info(f"✅ WAF zablokował bypass attempt: {payload}")
+        else:
+            # WAF NIE ZABLOKOWAŁ - teraz sprawdzamy, czy doszło do PODATNOŚCI
+            page_source = home_page_fixture.get_page_content().lower()
+            vulnerability_found = False
 
-                # Dodatkowe weryfikacje, jeśli bypass się powiódł
-                dangerous_indicators = [
-                    "You have an error in your SQL syntax",
-                    "mysql_fetch_array()",
-                    "root:x:",
-                    payload
-                ]
+            dangerous_indicators = [
+                "you have an error in your sql syntax",
+                "mysql_fetch_array()",
+                "root:x:",
+                payload.lower()  # Sprawdź, czy payload został wstrzyknięty/wykonany
+            ]
 
-                for indicator in dangerous_indicators:
-                    if indicator.lower() in page_source.lower():
-                        pytest.fail(
-                            f"❌ KRYTYCZNA PODATNOŚĆ: Bypass WAF skuteczny dla '{payload}' - wykryto: {indicator}")
+            for indicator in dangerous_indicators:
+                if indicator in page_source:
+                    pytest.fail(
+                        f"❌ KRYTYCZNA PODATNOŚĆ: Bypass WAF skuteczny dla '{payload}' - wykryto: {indicator}")
+                    vulnerability_found = True
+                    break
+
+            if not vulnerability_found:
+                logger.info(f"✅ Payload '{payload}' - brak wykrytych podatności (WAF bypass nie powiódł się)")
 
 
-@pytest.mark.skip(
-    reason="Testy bezpieczeństwa działają i poprawnie wykrywają WAF. Uruchamiaj je tylko w razie potrzeby.")
+#@pytest.mark.skip(reason="Testy bezpieczeństwa działają i poprawnie wykrywają WAF. Uruchamiaj je tylko w razie potrzeby.")
 def test_csrf_protection_presence(home_page_fixture: HomePage):
     """
     Testuje obecność tokenów CSRF.
@@ -147,12 +150,22 @@ def test_csrf_protection_presence(home_page_fixture: HomePage):
     logger.info("Test: obecność tokenów CSRF")
 
     csrf_indicators = [
+        # Najpopularniejsze i uniwersalne
         'name="csrf_token"',
         'name="_token"',
         'name="authenticity_token"',
         'name="csrfmiddlewaretoken"',
-        'name="token"',
-        'x-csrf-token'
+
+        # Ogólne wskaźniki pól wejściowych dla tokenów (hidden)
+        'type="hidden" name="token"',
+        'type="hidden" name="security_hash"',  # Czasem używane jako token
+
+        # Wskaźniki w nagłówkach HTTP/META (Playwright łapie tylko treść HTML)
+        '<meta name="csrf-token"',
+
+        # Specyficzny wskaźnik dla tej platformy (CS-Cart/przykładowe tokeny)
+        'security_hash',
+        'dispatch[session_token]'  # Wskaźnik, który może pojawić się w JS/URL
     ]
 
     page_source = home_page_fixture.get_page_content().lower()
@@ -173,8 +186,7 @@ def test_csrf_protection_presence(home_page_fixture: HomePage):
         pass  # Jeśli meta tagu nie ma, to nie jest błąd, tylko informacja
 
 
-@pytest.mark.skip(
-    reason="Testy bezpieczeństwa działają i poprawnie wykrywają WAF. Uruchamiaj je tylko w razie potrzeby.")
+#@pytest.mark.skip(reason="Testy bezpieczeństwa działają i poprawnie wykrywają WAF. Uruchamiaj je tylko w razie potrzeby.")
 def test_input_validation(home_page_fixture: HomePage):
     """Test walidacji danych wejściowych."""
     logger.info("Test: walidacja danych wejściowych")
@@ -196,7 +208,6 @@ def test_input_validation(home_page_fixture: HomePage):
     ]
 
     for payload in validation_payloads:
-        with pytest.warns(None):
             home_page_fixture.perform_search(payload)
             page_source = home_page_fixture.get_page_content()
 

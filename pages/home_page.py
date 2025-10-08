@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 class HomePage(BasePage):
     # NOWE LOKATORY ZWIĄZANE Z WYSZUKIWANIEM
-    SEARCH_INPUT = "input[name='q']"  # Standardowe pole wyszukiwania
+    SEARCH_INPUT = "input#search_input"  # Standardowe pole wyszukiwania
     SEARCH_BUTTON = "button.ty-search-magnifier"  # Przycisk lupy
     SEARCH_RESULTS_CONTAINER = "span.ty-mainbox-title__left"  # Kontener, który się zmienia po wyszukiwaniu
 
@@ -46,7 +46,11 @@ class HomePage(BasePage):
         search_button_locator.click()
 
         # Poczekaj na załadowanie nowej strony z wynikami
-        self.page.wait_for_load_state("load")
+        # Używamy LOKATORA z wynikami, aby mieć pewność, że to strona z wynikami.
+        self.page.wait_for_selector(self.SEARCH_RESULTS_CONTAINER, timeout=10000)
+        self.page.wait_for_load_state("networkidle")  # Upewnij się, że AJAX się uspokoił
+
+        logger.info("Strona z wynikami wyszukiwania załadowana.")
 
     def verify_search_results_exist(self):
         """
@@ -158,3 +162,47 @@ class HomePage(BasePage):
             raise ValueError(f"Brak zdefiniowanego oczekiwanego URL dla: {button_type}")
 
         return expected_url
+
+    # ...
+    # Metody dla testów bezpieczeństwa
+    # ...
+
+    def get_page_content(self) -> str:
+        """Zwraca cały kod źródłowy aktualnie załadowanej strony."""
+        # Playwright page.content() jest standardową metodą do pobierania źródła
+        return self.page.content()
+
+    def is_blocked_by_waf(self) -> bool:
+        """
+        Weryfikuje, czy strona została zablokowana przez WAF.
+        Wymaga dostosowania wskaźników do faktycznej strony WAF!
+        """
+        WAF_INDICATORS = [
+            "Access Denied",
+            "403 Forbidden",
+            "cloudflare",  # Często używane przez WAFy oparte na Cloudflare
+            "web application firewall"
+        ]
+
+        # Sprawdzenie treści strony
+        page_source = self.page.content().lower()
+        if any(indicator.lower() in page_source for indicator in WAF_INDICATORS):
+            logger.info("WAF indicator found in page content.")
+            return True
+
+        # Sprawdzenie, czy status HTTP to 403
+        try:
+            # Używamy last_response, który może nie być dostępny bezpośrednio
+            # dla samej page, ale możemy sprawdzić ostatnią odpowiedź w teście
+            # Najlepiej polegać na treści strony/URLu w Page Object.
+
+            # W Playwright, najłatwiej jest sprawdzić treść strony.
+            # Ewentualnie sprawdzenie URL, jeśli WAF przekierowuje na np. /403
+            if "403" in self.page.url:  # PRZYKŁAD: Jeśli URL zawiera 403
+                return True
+
+        except Exception:
+            # Ignoruj błędy przy próbie pobrania odpowiedzi
+            pass
+
+        return False

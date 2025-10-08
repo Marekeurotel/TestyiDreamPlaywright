@@ -20,15 +20,19 @@ class BasePage:
         self.page.goto(self.URL, wait_until="networkidle", timeout=30000)
         logger.info("Page navigation complete and network is idle.")
 
-        # KROK 1: Obsługa cookies (zgodnie z Twoją obserwacją)
-        try:
-            cookie_btn = self.page.get_by_role("button", name="Zezwól na wszystkie")
-            expect(cookie_btn).to_be_visible(timeout=5000)
-            cookie_btn.click()
-            expect(cookie_btn).not_to_be_visible(timeout=3000)
-            logger.info("✅ Cookie consent handled.")
-        except TimeoutError:
-            logger.warning("Cookie consent button not found or already handled.")
+        # KROK 1: Obsługa cookies
+        cookie_btn = self.page.get_by_role("button", name="Zezwól na wszystkie")
+
+        if cookie_btn.is_visible(timeout=5000):
+            try:
+                cookie_btn.click()
+                logger.info("✅ Cookie consent handled.")
+            except Exception:
+                # Na wypadek, gdyby kliknięcie zostało przerwane
+                logger.warning("Cookie click failed, but element was visible.")  # <--- Poprawione wcięcie
+        else:
+            # To jest oczekiwany stan, jeśli cookies zostały już zaakceptowane.
+            logger.info("Cookie banner not visible. Assuming consent already given.")  # <--- Poprawione wcięcie
 
         # KROK 2: Obsługa NOWEGO popupa 'bhr'
         try:
