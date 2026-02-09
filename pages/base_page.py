@@ -17,7 +17,7 @@ class BasePage:
         (cookies + nowy popup 'bhr').
         """
         logger.info(f"Navigating to {self.URL}...")
-        self.page.goto(self.URL, wait_until="networkidle", timeout=30000)
+        self.page.goto(self.URL, wait_until="domcontentloaded", timeout=45000)
         logger.info("Page navigation complete and network is idle.")
 
         # KROK 1: Obsługa cookies

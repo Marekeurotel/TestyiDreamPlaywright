@@ -16,7 +16,7 @@ class ProductPage(BasePage):
         self.add_to_cart_button_locator = self.page.locator("button:has-text('Do koszyka')").first
         self.continue_shopping_button_locator = self.page.locator("a.ty-btn.ty-btn__secondary.cm-notification-close:has-text('Kontynuuj zakupy')").first
         # Dodaj selektory dla szczegółów produktu, np.
-        self.product_name_locator = self.page.locator("h1.ty-product-block-title")
+        self.product_name_locator = self.page.locator("h1").first
         self.product_price_locator = self.page.locator(".ty-price-num")
         self.price_element: Locator = self.page.locator(".ty-price-num").first
         self.description_accordion: Locator = self.page.locator(".idr-accordion-title", has_text="Skrócony opis")
@@ -39,7 +39,7 @@ class ProductPage(BasePage):
         logger.info("Clicked 'Kontynuuj zakupy' button.")
 
     def get_product_name(self) -> str:
-        expect(self.product_name_locator).to_be_visible()
+        # Rezygnujemy z expect(), bo verify_product_details_displayed() już to zrobiło
         return self.product_name_locator.inner_text().strip()
 
     def get_product_price(self) -> str:

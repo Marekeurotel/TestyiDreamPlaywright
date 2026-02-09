@@ -24,9 +24,7 @@ def test_social_media_links(home_page_fixture: HomePage, button_type: str, expec
         try:
             logger.info("YouTube detected. Handling consent page if present...")
             # Znajdujemy przycisk "Akceptuj wszystko" (lub podobny) na stronie zgody
-            accept_button = popup_page.get_by_role(
-                "button", name="Akceptuj wszystko"
-            ).first
+            accept_button = popup_page.get_by_role("button", name="Akceptuj wszystko").first
 
             # Czekamy krótko, bo może go nie być, jeśli zgody zostały już zapisane
             expect(accept_button).to_be_visible(timeout=5000)

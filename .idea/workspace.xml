@@ -4,12 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9fcfe493-602a-4366-a5ee-675b3f7e172a" name="Changes" comment="Fixing tests product page">
+    <list default="true" id="9fcfe493-602a-4366-a5ee-675b3f7e172a" name="Changes" comment="Fixing tests test_security.py">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pages/base_page.py" beforeDir="false" afterPath="$PROJECT_DIR$/pages/base_page.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/home_page.py" beforeDir="false" afterPath="$PROJECT_DIR$/pages/home_page.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/product_page.py" beforeDir="false" afterPath="$PROJECT_DIR$/pages/product_page.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pytest.ini" beforeDir="false" afterPath="$PROJECT_DIR$/pytest.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_security.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_security.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_product_page.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_product_page.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_social_media_buttons.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_social_media_buttons.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,6 +64,7 @@
     "Python tests.Python tests for test_login.test_successful_login.executor": "Run",
     "Python tests.Python tests for test_navigation.test_main_menu_link_health.executor": "Run",
     "Python tests.Python tests for test_product_page.test_product_details_displayed.executor": "Run",
+    "Python tests.Python tests for test_product_page.test_verify_product_details_via_search.executor": "Run",
     "Python tests.Python tests for test_responsiveness.test_page_responsiveness.executor": "Run",
     "Python tests.Python tests for test_search_bar.test_search_for_iphone.executor": "Run",
     "Python tests.Python tests for test_security.test_csrf_protection_presence.executor": "Run",
@@ -89,7 +91,22 @@
       <recent name="$PROJECT_DIR$/tests" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_security.test_input_validation">
+  <component name="RunManager" selected="Python tests.Python tests for test_product_page.test_verify_product_details_via_search">
+    <configuration name="Python tests for test_product_page.test_verify_product_details_via_search" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="TestyiDream" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_product_page.test_verify_product_details_via_search&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
     <configuration name="Python tests for test_security.test_csrf_protection_presence" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="TestyiDream" />
       <option name="ENV_FILES" value="" />
@@ -102,21 +119,6 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
       <option name="_new_target" value="&quot;test_security.test_csrf_protection_presence&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration name="Python tests for test_security.test_diag_search" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="TestyiDream" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_security.test_diag_search&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -150,7 +152,7 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_security.test_xss_attack" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_social_media_buttons.test_social_media_links" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="TestyiDream" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -161,17 +163,17 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_security.test_xss_attack&quot;" />
+      <option name="_new_target" value="&quot;test_social_media_buttons.test_social_media_links&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for test_product_page.test_verify_product_details_via_search" />
+        <item itemvalue="Python tests.Python tests for test_social_media_buttons.test_social_media_links" />
         <item itemvalue="Python tests.Python tests for test_security.test_input_validation" />
         <item itemvalue="Python tests.Python tests for test_security.test_csrf_protection_presence" />
         <item itemvalue="Python tests.Python tests for test_security.test_waf_bypass_attempts" />
-        <item itemvalue="Python tests.Python tests for test_security.test_xss_attack" />
-        <item itemvalue="Python tests.Python tests for test_security.test_diag_search" />
       </list>
     </recent_temporary>
   </component>
@@ -239,7 +241,15 @@
       <option name="project" value="LOCAL" />
       <updated>1759825121658</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Fixing tests test_security.py">
+      <option name="closed" value="true" />
+      <created>1759912651498</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1759912651498</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -259,6 +269,7 @@
     <MESSAGE value="Change &quot;addopts&quot; in pytest.ini" />
     <MESSAGE value="Fixing tests" />
     <MESSAGE value="Fixing tests product page" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixing tests product page" />
+    <MESSAGE value="Fixing tests test_security.py" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixing tests test_security.py" />
   </component>
 </project>
