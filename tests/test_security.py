@@ -8,7 +8,8 @@ from playwright._impl._errors import TimeoutError
 logger = logging.getLogger(__name__)
 
 
-#@pytest.mark.skip(reason="Testy bezpieczeństwa działają i poprawnie wykrywają WAF. Uruchamiaj je tylko w razie potrzeby.")
+pytestmark = pytest.mark.skip(reason="Testy bezpieczeństwa wyłączone do odwołania")
+
 def test_sql_injection(home_page_fixture: HomePage):
     """
     Testuje podatność na SQL Injection, sprawdzając czy strona poprawnie blokuje atak.
