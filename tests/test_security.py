@@ -208,17 +208,31 @@ def test_input_validation(home_page_fixture: HomePage):
     ]
 
     for payload in validation_payloads:
-            home_page_fixture.perform_search(payload)
-            page_source = home_page_fixture.get_page_content()
+            try:
+                # Wykonanie wyszukiwania z ulepszonymi timeoutami w perform_search
+                home_page_fixture.perform_search(payload)
+                
+                # Dodatkowe oczekiwanie na pełne załadowanie treści strony przed pobraniem
+                # Upewniamy się, że strona jest w pełni gotowa do analizy
+                home_page_fixture.page.wait_for_load_state("domcontentloaded", timeout=30000)
+                
+                page_source = home_page_fixture.get_page_content()
 
-            if home_page_fixture.is_blocked_by_waf():
-                logger.info(f"✅ WAF zablokował payload walidacji: {payload}")
-                continue
+                if home_page_fixture.is_blocked_by_waf():
+                    logger.info(f"✅ WAF zablokował payload walidacji: {payload}")
+                    continue
 
-            for indicator in system_indicators:
-                assert indicator not in page_source, f"❌ Możliwy wyciek plików systemowych przy payload: {payload}"
+                for indicator in system_indicators:
+                    assert indicator not in page_source, f"❌ Możliwy wyciek plików systemowych przy payload: {payload}"
 
-            if "{{7*7}}" in payload or "${7*7}" in payload:
-                assert "49" not in page_source, "❌ Możliwa podatność na injection"
+                if "{{7*7}}" in payload or "${7*7}" in payload:
+                    assert "49" not in page_source, "❌ Możliwa podatność na injection"
 
-            logger.info(f"✅ Payload '{payload}' - brak wykrytych podatności walidacji")
+                logger.info(f"✅ Payload '{payload}' - brak wykrytych podatności walidacji")
+                
+            except TimeoutError as e:
+                # Logowanie szczegółowych informacji o błędzie timeout dla diagnostyki
+                logger.error(f"⏱️ TimeoutError dla payload '{payload}': {e}")
+                # Zrzut ekranu dla analizy problemu
+                home_page_fixture.page.screenshot(path=f"timeout_error_{payload[:20].replace('/', '_')}.png")
+                raise

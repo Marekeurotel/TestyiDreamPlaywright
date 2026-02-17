@@ -32,23 +32,35 @@ class HomePage(BasePage):
     def perform_search(self, query: str):
         """
         Wyszukuje produkt, wpisując tekst do paska wyszukiwania i zatwierdzając.
-        To naprawia błąd w test_search_bar.py.
+        Ulepszona wersja z bardziej precyzyjnymi oczekiwaniami i wydłużonymi timeoutami
+        dla większej stabilności testów (szczególnie test_input_validation).
         """
         logger.info(f"Wykonywanie wyszukiwania dla zapytania: '{query}'")
         search_input_locator = self.page.locator(self.SEARCH_INPUT)
         search_button_locator = self.page.locator(self.SEARCH_BUTTON)
 
-        # Sprawdzenie i wpisanie tekstu
-        expect(search_input_locator).to_be_visible(timeout=5000)
+        # 1. Oczekiwanie na widoczność i interaktywność pola wyszukiwania
+        # Zwiększony timeout z 5s do 15s dla większej odporności na wolne ładowanie
+        expect(search_input_locator).to_be_visible(timeout=15000)
+        expect(search_input_locator).to_be_enabled(timeout=15000)
+        
+        # Wypełnienie pola
         search_input_locator.fill(query)
 
-        # Kliknięcie przycisku
+        # 2. Oczekiwanie na dostępność przycisku wyszukiwania przed kliknięciem
+        expect(search_button_locator).to_be_visible(timeout=15000)
+        expect(search_button_locator).to_be_enabled(timeout=15000)
         search_button_locator.click()
 
-        # Poczekaj na załadowanie nowej strony z wynikami
-        # Używamy LOKATORA z wynikami, aby mieć pewność, że to strona z wynikami.
-        self.page.wait_for_selector(self.SEARCH_RESULTS_CONTAINER, timeout=10000)
-        self.page.wait_for_load_state("networkidle")  # Upewnij się, że AJAX się uspokoił
+        # 3. Oczekiwanie na załadowanie strony z wynikami z wydłużonym timeoutem
+        # Zwiększony timeout z 10s do 30s dla większej odporności na wolne odpowiedzi serwera
+        # Dodatkowo używamy expect zamiast wait_for_selector dla lepszej integracji z Playwright
+        results_container_locator = self.page.locator(self.SEARCH_RESULTS_CONTAINER)
+        expect(results_container_locator).to_be_visible(timeout=30000)
+        
+        # 4. Oczekiwanie na uspokojenie się sieci (AJAX, lazy loading itp.)
+        # Zwiększony timeout dla networkidle z domyślnego do 30s
+        self.page.wait_for_load_state("networkidle", timeout=30000)
 
         logger.info("Strona z wynikami wyszukiwania załadowana.")
 
