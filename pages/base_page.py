@@ -73,11 +73,15 @@ class BasePage:
         bhr_iframe_overlay = self.page.frame_locator('#bhr-items iframe').locator('div').nth(3)
         salesmanago_iframe_button = self.page.frame_locator(
             'iframe[title="salesmanago-consent-form-title"]').get_by_role('button', {'name': 'Nie'})
+        
+        # Nowy overlay zidentyfikowany w analizie Gemini
+        gemini_identified_overlay = self.page.locator("#wes-77605808-07d1-43c9-bace-421e2a2ddec8")
 
         overlays_to_check = [
             (bhr_div_overlay, "BHR Div Overlay"),
             (bhr_iframe_overlay, "BHR IFrame Div Overlay"),
-            (salesmanago_iframe_button, "Salesmanago Consent Button")
+            (salesmanago_iframe_button, "Salesmanago Consent Button"),
+            (gemini_identified_overlay, "Gemini Analysis Identified Overlay (#wes-...)")
         ]
 
         for overlay_locator, name in overlays_to_check:

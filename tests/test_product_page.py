@@ -38,7 +38,7 @@ def test_verify_product_details_via_search(page):
         product_name_text = first_product_link.inner_text().strip()
         logger.info(f"Znaleziono produkt: {product_name_text}. Klikam...")
 
-        first_product_link.click()
+        product_page.safe_click(first_product_link)
     except Exception as e:
         # W razie błędu robimy zrzut ekranu – to kluczowe w ISTQB do dokumentacji defektu
         page.screenshot(path="failed_search_results.png")
