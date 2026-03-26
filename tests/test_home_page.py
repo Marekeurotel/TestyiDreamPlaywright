@@ -8,5 +8,5 @@ logger = logging.getLogger(__name__)
 
 def test_home_page_title(home_page_fixture):
     logger.info("Test: sprawdzenie tytułu strony głównej.")
-    expect(home_page_fixture.page).to_have_title("iDream Apple Sklep internetowy - Apple Premium Reseller Polska")
+    expect(home_page_fixture.page).to_have_title("iDream | Apple sklep, autoryzowany sprzedawca Apple Premium Reseller Polska")
     logger.info("✅ Tytuł strony głównej jest poprawny.")

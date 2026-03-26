@@ -23,7 +23,31 @@ class ProductPage(BasePage):
         self.specification_tab: Locator = self.page.locator(".ty-tabs__a", has_text="Dane techniczne")
 
     def open_specific_product(self, product_url: str):
-        self.page.goto(product_url) # Używamy metody go_to z BasePage
+        self.page.goto(product_url)
+
+    def open_specific_product_and_handle_popups(self, product_url: str):
+        """Otwiera konkretną stronę produktu i obsługuje początkowe popupy."""
+        logger.info(f"Otwieranie strony produktu: {product_url}")
+        self.page.goto(product_url, wait_until="domcontentloaded", timeout=45000)
+        
+        # KROK 1: Obsługa cookies
+        cookie_btn = self.page.get_by_role("button", name="Zezwól na wszystkie")
+        if cookie_btn.is_visible(timeout=5000):
+            try:
+                cookie_btn.click()
+                logger.info("✅ Cookies zaakceptowane.")
+            except Exception:
+                logger.warning("Nie udało się kliknąć cookies.")
+
+        # KROK 2: Obsługa bhr popup
+        try:
+            popup_container = self.page.locator("div.bhr-board__canvas.type--POPUP")
+            if popup_container.is_visible(timeout=5000):
+                close_button = self.page.get_by_title("Kliknij tutaj!")
+                close_button.click()
+                logger.info("✅ 'bhr' popup zamknięty.")
+        except Exception as e:
+            logger.error(f"Błąd podczas zamykania bhr popup: {e}")
 
     def add_product_to_cart(self):
         logger.info("Attempting to add product to cart.")
